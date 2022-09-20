@@ -1,28 +1,20 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const chats = require('./dummydata');
+const connectDB = require('./config/db');
+const userRoutes = require('./routes/userRoutes');
 const PORT = process.env.PORT || 5000;
 dotenv.config();
-const app = express();
-
-
-// app.get('/', (req, res)=>{
-//       res.send('Home route')
-// })
-
-app.get('/api/chat', (req, res)=>{
-      res.send(chats);
-})
-
-
-//for single chat.
-app.get('/api/chat/:id', (req, res)=>{
-      // console.log(req.params);
-})
-
 // database connection
+connectDB();
+const app = express();
+app.use(express.json());
 
 
+app.use('/api/user', userRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 
 
 app.listen(PORT, ()=>{
