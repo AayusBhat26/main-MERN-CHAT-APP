@@ -1,7 +1,28 @@
-import { StackDivider, VStack } from '@chakra-ui/react';
-import React from 'react'
-import styled from 'styled-components';
+import {
+  InputGroup,
+  InputRightElement,
+  StackDivider,
+  VStack,
+} from "@chakra-ui/react";
+import React, { useState } from "react";
+import styled from "styled-components";
 const Login = () => {
+  // for change the password from text to password.
+  const [show, setShow] = useState(false);
+  const [name, setName] = useState();
+  // const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  
+  const [pic, setPic] = useState();
+
+  // handling the click.
+  const handleClick = () => {
+    setShow(!show);
+  };
+
+  const submitHandler = ()=>{
+
+  }
   return (
     <VStack
       divider={<StackDivider borderColor="gray.200" />}
@@ -19,33 +40,43 @@ const Login = () => {
             <h1>Login</h1>
           </div>
 
-          {/* for username */}
+          {/* for name */}
           <input
             type="text"
-            placeholder="username"
+            placeholder="Enter Your Name"
             name="username"
             onChange={(e) => {
-              //   handleChange(e);
+              setName(e.target.value);
             }}
           />
-
 
           {/* for password */}
 
-          <input
-            type="password"
-            placeholder="Password"
-            name="password"
-            onChange={(e) => {
-              //   handleChange(e);
-            }}
-          />
-          <button type="submit">Login</button>
+          <InputGroup>
+            <input
+              type={show ? "text" : "password"}
+              placeholder="Password"
+              name="password"
+              onChange={(e) => {
+                //   handleChange(e);
+                setPassword(e.target.value);
+              }}
+            />
+            <InputRightElement className="showPassword" onClick={handleClick}>
+              {show ? "Hide" : "Show"}
+            </InputRightElement>
+          </InputGroup>
+          <button type="submit" onClick={submitHandler}>
+            Register
+          </button>
+          <button type="submit" onClick={submitHandler}>
+            Login As Guest
+          </button>
         </form>
       </FormContainer>
     </VStack>
   );
-}
+};
 const FormContainer = styled.div`
   .title {
     h1 {
@@ -53,6 +84,13 @@ const FormContainer = styled.div`
     }
   }
   form {
+    .showPassword {
+      cursor: pointer;
+      display: absolute;
+      color: #7870e6;
+      top: 20%;
+      right: 2.5%;
+    }
     /* border-radius: 20px;
     border: 1px solid #141488; */
     display: flex;
@@ -105,4 +143,4 @@ const FormContainer = styled.div`
     }
   }
 `;
-export default Login
+export default Login;

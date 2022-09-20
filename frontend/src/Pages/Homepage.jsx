@@ -2,10 +2,10 @@ import React from 'react'
 import {Box, Container, Tab, TabList, TabPanel, TabPanels, Tabs, Text} from '@chakra-ui/react';
 import Login from "../components/Authentication/Login";
 import SignUp from "../components/Authentication/SignUp";
-// import Login from '../../../../../chat-application-mern-styled-react/frontend/src/pages/Login';
+
 const Homepage = () => {
   return (
-    <Container maxW="xl" centerContent>
+    <Container width="100%" height="100%" centerContent>
       <Box
         display="flex"
         justifyContent="center"
@@ -22,17 +22,17 @@ const Homepage = () => {
         <Text>CHAT</Text>
       </Box>
       <Box w="100%" textColor="whitesmoke" fontSize="1.6rem">
-        <Tabs isFitted variant="enclosed" m="2rem 0 0.5rem 0" >
+        <Tabs isFitted variant="enclosed" m="2rem 0 0.5rem 0">
           <TabList mb="1em">
             <Tab fontSize="1.2rem">Login</Tab>
             <Tab fontSize="1.2rem">SignUp</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Login/>
+              <Login />
             </TabPanel>
             <TabPanel>
-              <SignUp/>
+              <SignUp />
             </TabPanel>
           </TabPanels>
         </Tabs>
