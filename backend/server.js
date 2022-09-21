@@ -4,7 +4,8 @@ const chats = require('./dummydata');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const PORT = process.env.PORT || 5000;
-dotenv.config();
+const {notFound, errorHandler} = require('./middleware/errorMiddleware')
+ dotenv.config();
 // database connection
 connectDB();
 const app = express();

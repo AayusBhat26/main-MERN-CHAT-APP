@@ -1,30 +1,130 @@
-import { Box, FormControl, FormLabel, Input, InputGroup, InputRightElement, StackDivider, VStack } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, StackDivider, VStack } from '@chakra-ui/react';
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import { Link, useHistory } from 'react-router-dom';
+import axios from 'axios';
 
+// import {useHistory} from 'react-router-dom';
+
+
+import styled from 'styled-components';
+import { useToast } from "@chakra-ui/react";
 const SignUp = () => {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
   const [pic, setPic] = useState();
-
+  const history = useHistory();
+  const [loading, setLoading] = useState(false);
   // for change the password from text to password.
   const [show, setShow] = useState(false);
-
-  // handling the click.
+  // toast => charka ui
+  const toast = useToast();
+  // handling the click, to show or hide the password
   const handleClick = ()=>{
     setShow(!show)
   }
 
   const postDetails = (pics)=>{
-    
+    setLoading(true);
+
+    // todo: check whether the pics is defined or not
+    if(pics===undefined){
+      toast({
+        title:'Select An Image', 
+        status: 'warning', 
+        duration:4500, 
+        isClosable: true, 
+        position: 'top-right'
+      });
+      return;
+    }
+
+// todo: check the type of image or whether it is image or not.
+    if(pics.type==='image/jpeg' || pics.type==='image/png' ){
+      const data = new FormData();
+      data.append('file', pics);
+      data.append("upload_preset", "mern-chat-app-main");
+      data.append("cloud_name", "dlz59rwq0");
+      fetch("https://api.cloudinary.com/v1_1/dlz59rwq0/image/upload", {
+        method: "POST",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log(data);
+          setPic(data.url.toString());
+          // console.log(data.url.toString());
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    }
+    else{
+        toast({
+          title: "Select An Image",
+          status: "warning",
+          duration: 4500,
+          isClosable: true,
+          position: "top-right",
+        });
+        setLoading(false);
+        return;
+    }
   }
 
 
-  const submitHandler = ()=>{
+  const submitHandler = async()=>{
+    setLoading(true);
 
+
+    if(!name ||!email||!password||!confirmPassword){
+       toast({
+         title: "All Fields Are Required",
+         status: "warning",
+         duration: 4500,
+         isClosable: true,
+         position: "top-right",
+       });
+       setLoading(false);
+       return;
+    }
+    try{
+      // ab hume headers set krne padenge 
+      const config = {
+        headers:{
+          "Content-Type": "application/json",
+        }
+      }
+      // humara register page "/" route pe hai 
+      const  {data} = await axios.post('/api/user/', {name, email, password, pic}, config);
+       toast({
+         title: "Registeration Successful",
+         status: "success",
+         duration: 4500,
+         isClosable: true,
+         position: "top-right",
+       });
+       localStorage.setItem('userInfoMernChat', JSON.stringify(data));
+       setLoading(false);
+      //  todo: if error or bug is being faced, use navigate from react router dom.
+
+       history.push('/chats');
+      
+    }
+    catch(err){
+      toast({
+        title: "ERROR FACED, TRY AGAIN",
+        description: err.response.data.message,
+        status: "error",
+        duration: 4500,
+        isClosable: true,
+        position: "top-right",
+      });
+      setLoading(false);
+    }
   }
 
 
@@ -76,7 +176,7 @@ const SignUp = () => {
               name="password"
               onChange={(e) => {
                 //   handleChange(e);
-                setPassword(e.target.value)
+                setPassword(e.target.value);
               }}
             />
             <InputRightElement className="showPassword" onClick={handleClick}>
@@ -105,10 +205,12 @@ const SignUp = () => {
               onChange={(e) => {
                 postDetails(e.target.files[0]);
               }}
-              className='image'
+              className="image"
             />
           </FormControl>
-          <button type="submit" onClick={submitHandler}>Register</button>
+          {/* <button type="submit" onClick={submitHandler}
+          >Register</button> */}
+          <Button isLoading={loading} onClick={submitHandler}>register</Button>
           {/* <span>
             Already have an account? <Link to="/login">Login</Link>
           </span> */}

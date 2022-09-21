@@ -1,28 +1,86 @@
 import {
+  Button,
   InputGroup,
   InputRightElement,
   StackDivider,
+  Toast,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
+import axios from "axios";
+
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 const Login = () => {
+  const history = useHistory();
   // for change the password from text to password.
   const [show, setShow] = useState(false);
-  const [name, setName] = useState();
-  // const [email, setEmail] = useState();
+  // const [name, setName] = useState();
+  const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  
+  const [loading,setLoading]= useState(false);
   const [pic, setPic] = useState();
-
+  const toast = useToast();
+  
   // handling the click.
   const handleClick = () => {
     setShow(!show);
   };
 
-  const submitHandler = ()=>{
+  const submitHandler = async () => {
+    setLoading(true);
 
-  }
+    if (!email || !password) {
+      toast({
+        title: "All Fields Are Required",
+        status: "warning",
+        duration: 4500,
+        isClosable: true,
+        position: "top-right",
+      });
+      setLoading(false);
+      return;
+    }
+    try {
+      // ab hume headers set krne padenge
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        "/api/user/login",
+        {email, password },
+        config
+      );
+      toast({
+        title: "Login Successful",
+        status: "success",
+        duration: 4500,
+        isClosable: true,
+        position: "top-right",
+      });
+      localStorage.setItem("userInfoMernChat", JSON.stringify(data));
+      setLoading(false);
+
+
+      //  todo: if error or bug is being faced, use navigate from react router dom.
+
+      history.push("/chats");
+    } catch (err) {
+      toast({
+        title: "ERROR FACED, TRY AGAIN",
+        description: err.response.data.message,
+        status: "error",
+        duration: 4500,
+        isClosable: true,
+        position: "top-right",
+      });
+      setLoading(false);
+    }
+  };
+
   return (
     <VStack
       divider={<StackDivider borderColor="gray.200" />}
@@ -39,8 +97,7 @@ const Login = () => {
             <img src="" alt="" />
             <h1>Login</h1>
           </div>
-
-          {/* for name */}
+          {/* for name
           <input
             type="text"
             placeholder="Enter Your Name"
@@ -48,15 +105,25 @@ const Login = () => {
             onChange={(e) => {
               setName(e.target.value);
             }}
+          /> */}
+          {/* for email */}
+          <input
+            type="email"
+            placeholder="Email"
+            name="email"
+            value={email}
+            onChange={(e) => {
+              //   handleChange(e);
+              setEmail(e.target.value);
+            }}
           />
-
           {/* for password */}
-
           <InputGroup>
             <input
               type={show ? "text" : "password"}
               placeholder="Password"
               name="password"
+              value={password}
               onChange={(e) => {
                 //   handleChange(e);
                 setPassword(e.target.value);
@@ -66,12 +133,18 @@ const Login = () => {
               {show ? "Hide" : "Show"}
             </InputRightElement>
           </InputGroup>
-          <button type="submit" onClick={submitHandler}>
-            Register
-          </button>
-          <button type="submit" onClick={submitHandler}>
+          <Button isLoading={loading} onClick={submitHandler}>
+            Login
+          </Button>
+          <Button
+            isLoading={loading}
+            onClick={() => {
+              setEmail("guestUser@Aayush.com");
+              setPassword("GuestPassword");
+            }}
+          >
             Login As Guest
-          </button>
+          </Button>
         </form>
       </FormContainer>
     </VStack>
