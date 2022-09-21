@@ -1,26 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
+import styled from 'styled-components';
+import { ChatState } from '../Context/ChatProvider';
+
+// how do we take something from context api.
+
+
 const ChatPage = () => {
-      const [chats, setChats] = useState([]);
-      const fetchChats = async()=>{
-          const {data} = await axios.get('/api/chat');
-          setChats(data);
-      //     console.log(data);
-      }
-      useEffect(()=>{
-            fetchChats();
-      }, [])
+      const {user} = ChatState();
   return (
-    <div>
-      {
-            chats.map((singleChat)=>{
-                  return (
-                        <h1 key={singleChat._id}>{singleChat.chatName}</h1>
-                  )
-            })
-      }
-    </div>
+    <Container>
+    Hi
+    </Container>
   )
 }
+const Container = styled.div`
+color: whitesmoke;
+width: 100%;
 
+`
 export default ChatPage
