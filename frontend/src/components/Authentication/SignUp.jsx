@@ -195,22 +195,49 @@ const SignUp = () => {
               //   handleChange(e);
             }}
           />
-          <FormControl id="pic">
+          <FormControl
+            id="pic"
+            display="flex"
+            flexDirection="row"
+            fontSize="1rem"
+            justifyContent="space-between"
+          >
             <FormLabel>Upload Your Picture</FormLabel>
             {/* todo: style this component. */}
+            {/* <Button >Upload image</Button> */}
             <Input
+              id="mainUploadImageInp"
               type="file"
               p="1.5"
               accept="image/"
+              display="none"
               onChange={(e) => {
                 postDetails(e.target.files[0]);
               }}
               className="image"
             />
+            <label
+              htmlFor="mainUploadImageInp"
+              style={{
+                // position: 'absolute',
+                marginBottom: '10px',
+                color: "whitesmoke",
+                fontSize: "0.8rem",
+                padding: "12px",
+                backgroundColor: "#7870e6",
+                borderRadius: "8px",
+                cursor: 'pointer'
+              }
+            }
+            >
+              Upload
+            </label>
           </FormControl>
           {/* <button type="submit" onClick={submitHandler}
           >Register</button> */}
-          <Button isLoading={loading} onClick={submitHandler}>register</Button>
+          <Button isLoading={loading} onClick={submitHandler}>
+            register
+          </Button>
           {/* <span>
             Already have an account? <Link to="/login">Login</Link>
           </span> */}
@@ -226,8 +253,8 @@ const FormContainer = styled.div`
     }
   }
   form {
-    /* border-radius: 20px;
-    border: 1px solid #141488; */
+    // upload image
+
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -235,16 +262,14 @@ const FormContainer = styled.div`
     padding: 3rem 5.1rem;
     background-color: #00000080;
 
-
     .showPassword {
       /* color: red; */
       cursor: pointer;
       display: absolute;
       color: #7870e6;
-      top:20%;
+      top: 20%;
       right: 2.5%;
     }
-
 
     /* padding: 0.5rem; */
     input {
@@ -263,6 +288,7 @@ const FormContainer = styled.div`
         outline: none;
       }
     }
+
     button {
       color: whitesmoke;
       padding: 1rem 2rem;
@@ -278,6 +304,7 @@ const FormContainer = styled.div`
         background-color: #0a1482;
       }
     }
+
     span {
       text-transform: uppercase;
       color: whitesmoke;

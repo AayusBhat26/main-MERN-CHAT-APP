@@ -54,8 +54,19 @@ const authUser = asyncHandler(async(req, res)=>{
             res.status(400);
             throw new Error('Invalid Email or Password');
       }
+});
+
+
+
+// search user.
+// in order to use the ,post request we need to use posr request, thats why  i will use queries here
+// for exmaple: /api/user?search=someuser
+const allUsers = asyncHandler(async(req,res)=>{
+      const keyword  = req.query
 })
 
 module.exports = {
-      registerUser, authUser
-}
+  registerUser,
+  authUser,
+  allUsers,
+};
