@@ -116,12 +116,112 @@ const createGroupChat = asyncHandler(async(req, res)=>{
   }
 });
 //todo: renameGroup => chatGroupRoute
-const renameGroup = ()=>{
+const renameGroup = asyncHandler(async(req,res)=>{
+  const {chatId, chatName} = req.body;
+  const updatedChat = await Chat.findByIdAndUpdate(
+    chatId, {
+      // chatName:chatName
+      chatName
+      // todo: check why it was returning the old name of the group
+    },{
+      //edit: we have to use new:true, in order to get the new value of the updated value.
+      new:true,
+    }
+  ).populate('users', '-password')
+  .populate('groupAdmin', '-password');
+  // checking whether the chat exist or not.
+  if(!updatedChat){
+    res.status(404);
+    throw new Error('Chat does not exist');
+  }
+  else{
+    res.json(updatedChat);
+  }
+})
 
-}
+
+// adding users to group.
+
+const addToGroup = asyncHandler(async(req,res)=>{
+  const {chatId, userId } = req.body;
+// bhai await lga le 1 ghante se pareshan kr diya hai isne
+  // dont forget to add await here
+  const added = await Chat.findByIdAndUpdate(
+    //todo: push the new member to the group.
+    chatId,
+    {
+      $push: { users: userId }
+    },
+    {
+      new: true,
+    }
+  ).populate('users', '-password')
+  .populate('groupAdmin', '-password');
+
+  if(!added){
+    res.status(404);
+    throw new Error('Chat was not found');
+  }
+  else{
+    res.json(added);
+  }
+})
+/*
+const removeFromGroup = asyncHandler(async(req,res)=>{
+  const { chatId, userId } = req.body;
+  // bhai await lga le 1 ghante se pareshan kr diya hai isne
+
+  const removed = await Chat.findByIdAndUpdate(
+    //todo: push the new member to the group.
+    chatId,
+    {
+      $pull: { users: userId },
+    },
+    {
+      new: true,
+    }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  if (!removed) {
+    res.status(404);
+    throw new Error("Chat was not found");
+  } else {
+    res.json(removed);
+  }
+})
+*/
+
+const removeFromGroup = asyncHandler(async (req, res) => {
+  const { chatId, userId } = req.body;
+
+  // check if the requester is admin
+
+  const removed = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      $pull: { users: userId },
+    },
+    {
+      new: true,
+    }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  if (!removed) {
+    res.status(404);
+    throw new Error("Chat Not Found");
+  } else {
+    res.json(removed);
+  }
+});
 module.exports = {
   accessChat,
   fetchChats,
   createGroupChat,
   renameGroup,
+  addToGroup,
+  removeFromGroup
 };
