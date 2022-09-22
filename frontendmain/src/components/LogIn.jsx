@@ -8,81 +8,90 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-const Login = () => {
-  const history = useHistory();
-  // for change the password from text to password.
-  const [show, setShow] = useState(false);
-  // const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [loading,setLoading]= useState(false);
-  const [pic, setPic] = useState();
-  const toast = useToast();
-  
-  // handling the click.
-  const handleClick = () => {
-    setShow(!show);
-  };
 
-  const submitHandler = async () => {
-    setLoading(true);
+const LogIn = () => {
 
-    if (!email || !password) {
-      toast({
-        title: "All Fields Are Required",
-        status: "warning",
-        duration: 4500,
-        isClosable: true,
-        position: "top-right",
-      });
-      setLoading(false);
-      return;
-    }
-    try {
-      // ab hume headers set krne padenge
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const [show, setShow] = useState(false);
+      // const [name, setName] = useState();
+      const [email, setEmail] = useState();
+      const [password, setPassword] = useState();
+      const [loading, setLoading] = useState(false);
+      // const [pic, setPic] = useState();
+      const toast = useToast();
+      const navigate = useNavigate();
+
+      // to check whether user is logged in already
+
+      const checkUser = ()=>{
+        if(localStorage.getItem('userInfoMernChat')){
+          navigate('/chats')
+        }
+      }
+      const handleClick = () => {
+        setShow(!show);
       };
-      const { data } = await axios.post(
-        "/api/user/login",
-        {email, password },
-        config
-      );
-      toast({
-        title: "Login Successful",
-        status: "success",
-        duration: 4500,
-        isClosable: true,
-        position: "top-right",
-      });
-      localStorage.setItem("userInfoMernChat", JSON.stringify(data));
-      setLoading(false);
+      useEffect(()=>{
+        checkUser();
+      },[])
+       const submitHandler = async () => {
+         setLoading(true);
 
+         if (!email || !password) {
+           toast({
+             title: "All Fields Are Required",
+             status: "warning",
+             duration: 4500,
+             isClosable: true,
+             position: "top-right",
+           });
+           setLoading(false);
+           return;
 
-      //  todo: if error or bug is being faced, use navigate from react router dom.
+           //  newFrontendUser@gmail.com
+         }
+         try {
+           // ab hume headers set krne padenge
+           const config = {
+             headers: {
+               "Content-Type": "application/json",
+             },
+           };
+           const { data } = await axios.post(
+             "/api/user/login",
+             { email, password },
+             config
+           );
+           toast({
+             title: "Login Successful",
+             status: "success",
+             duration: 4500,
+             isClosable: true,
+             position: "top-right",
+           });
+           localStorage.setItem("userInfoMernChat", JSON.stringify(data));
+           setLoading(false);
+           navigate('/chats')
+           //  todo: if error or bug is being faced, use navigate from react router dom.
 
-      history.push("/chats");
-    } catch (err) {
-      toast({
-        title: "ERROR FACED, TRY AGAIN",
-        description: err.response.data.message,
-        status: "error",
-        duration: 4500,
-        isClosable: true,
-        position: "top-right",
-      });
-      setLoading(false);
-    }
-  };
-
+           
+         } catch (err) {
+           toast({
+             title: "ERROR FACED, TRY AGAIN",
+             description: err.response.data.message,
+             status: "error",
+             duration: 4500,
+             isClosable: true,
+             position: "top-right",
+           });
+           setLoading(false);
+         }
+       };
   return (
-    <VStack
+
+        <VStack
       divider={<StackDivider borderColor="gray.200" />}
       spacing={4}
       align="stretch"
@@ -97,16 +106,9 @@ const Login = () => {
             <img src="" alt="" />
             <h1>Login</h1>
           </div>
-          {/* for name
-          <input
-            type="text"
-            placeholder="Enter Your Name"
-            name="username"
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
-          /> */}
           {/* for email */}
+
+
           <input
             type="email"
             placeholder="Email"
@@ -121,19 +123,25 @@ const Login = () => {
           <InputGroup>
             <input
               type={show ? "text" : "password"}
+            // type={'password'}
               placeholder="Password"
               name="password"
               value={password}
               onChange={(e) => {
-                //   handleChange(e);
+                  // handleChange(e);
                 setPassword(e.target.value);
               }}
+
             />
-            <InputRightElement className="showPassword" onClick={handleClick}>
+            <InputRightElement className="showPassword" 
+            onClick={handleClick}
+            >
               {show ? "Hide" : "Show"}
             </InputRightElement>
           </InputGroup>
-          <Button isLoading={loading} onClick={submitHandler}>
+          <Button
+           isLoading={loading} onClick={submitHandler}
+           >
             Login
           </Button>
           <Button
@@ -150,6 +158,8 @@ const Login = () => {
     </VStack>
   );
 };
+
+// STYLED COMPONENTS
 const FormContainer = styled.div`
   .title {
     h1 {
@@ -216,4 +226,4 @@ const FormContainer = styled.div`
     }
   }
 `;
-export default Login;
+export default LogIn;

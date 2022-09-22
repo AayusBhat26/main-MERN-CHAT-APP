@@ -9,21 +9,17 @@ import {
   Tabs,
   Text,
 } from "@chakra-ui/react";
-import Login from "../components/Authentication/Login";
-import SignUp from "../components/Authentication/SignUp";
-import { useHistory } from "react-router-dom";
+import LogIn from "../components/LogIn";
+import SignUp from "../components/SignUp";
 
 const Homepage = () => {
 
-
-  const history = useHistory();
-  useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userInfoMernChat"));
-    if (userInfo) {
-      history.push("/chats");
-    }
-  }, [history]);
-
+  // useEffect(() => {
+  //   const userInfo = JSON.parse(localStorage.getItem("userInfoMernChat"));
+  //   if (userInfo) {
+  //     history.push("/chats");
+  //   }
+  // }, [history]);
 
   return (
     <Container width="100%" height="100%" centerContent>
@@ -50,7 +46,7 @@ const Homepage = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Login />
+              <LogIn />
             </TabPanel>
             <TabPanel>
               <SignUp />

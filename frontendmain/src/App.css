@@ -3,6 +3,7 @@
 .App{
       min-height: 100vh;
       display: flex;
+      color: white;
       background-color: #060320;
       font-family: 'Josefin Sans', sans-serif;
 }

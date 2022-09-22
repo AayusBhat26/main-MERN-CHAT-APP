@@ -1,120 +1,93 @@
-import { Box, Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, StackDivider, VStack } from '@chakra-ui/react';
-import React, { useState } from 'react'
-import { Link, useHistory } from 'react-router-dom';
-import axios from 'axios';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Text,
+  InputGroup,
+  InputRightElement,
+  StackDivider,
+  VStack,
+} from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-// import {useHistory} from 'react-router-dom';
-
-
-import styled from 'styled-components';
+import styled from "styled-components";
 import { useToast } from "@chakra-ui/react";
+
 const SignUp = () => {
+  const navigate = useNavigate();
+  // show state for password
+  const [show, setShow] = useState(false);
+
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
-  const [pic, setPic] = useState();
-  const history = useHistory();
   const [loading, setLoading] = useState(false);
-  // for change the password from text to password.
-  const [show, setShow] = useState(false);
-  // toast => charka ui
+  const [pic, setPic] = useState();
   const toast = useToast();
-  // handling the click, to show or hide the password
-  const handleClick = ()=>{
-    setShow(!show)
-  }
 
-  const postDetails = (pics)=>{
+  // Change type for password.
+  const handleClick = () => {
+    setShow(!show);
+  };
+
+  // onsubmit of image
+
+  const submitHandler = async () => {
     setLoading(true);
 
-    // todo: check whether the pics is defined or not
-    if(pics===undefined){
+    if (!name || !email || !password || !confirmPassword) {
       toast({
-        title:'Select An Image', 
-        status: 'warning', 
-        duration:4500, 
-        isClosable: true, 
-        position: 'top-right'
+        title: "All Fields Are Required",
+        status: "warning",
+        duration: 4500,
+        isClosable: true,
+        position: "top-right",
       });
+      setLoading(false);
       return;
     }
-
-// todo: check the type of image or whether it is image or not.
-    if(pics.type==='image/jpeg' || pics.type==='image/png' ){
-      const data = new FormData();
-      data.append('file', pics);
-      data.append("upload_preset", "mern-chat-app-main");
-      data.append("cloud_name", "dlz59rwq0");
-      fetch("https://api.cloudinary.com/v1_1/dlz59rwq0/image/upload", {
-        method: "POST",
-        body: data,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          // console.log(data);
-          setPic(data.url.toString());
-          // console.log(data.url.toString());
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setLoading(false);
-        });
+    if (password !== confirmPassword) {
+      toast({
+        title: "Password and Confirma Password Are Unequal",
+        status: "warning",
+        duration: 4500,
+        isClosable: true,
+        position: "top-right",
+      });
+      // setLoading(false);
+      return;
     }
-    else{
-        toast({
-          title: "Select An Image",
-          status: "warning",
-          duration: 4500,
-          isClosable: true,
-          position: "top-right",
-        });
-        setLoading(false);
-        return;
-    }
-  }
-
-
-  const submitHandler = async()=>{
-    setLoading(true);
-
-
-    if(!name ||!email||!password||!confirmPassword){
-       toast({
-         title: "All Fields Are Required",
-         status: "warning",
-         duration: 4500,
-         isClosable: true,
-         position: "top-right",
-       });
-       setLoading(false);
-       return;
-    }
-    try{
-      // ab hume headers set krne padenge 
+    try {
+      // ab hume headers set krne padenge
       const config = {
-        headers:{
+        headers: {
           "Content-Type": "application/json",
-        }
-      }
-      // humara register page "/" route pe hai 
-      const  {data} = await axios.post('/api/user/', {name, email, password, pic}, config);
-       toast({
-         title: "Registeration Successful",
-         status: "success",
-         duration: 4500,
-         isClosable: true,
-         position: "top-right",
-       });
-       localStorage.setItem('userInfoMernChat', JSON.stringify(data));
-       setLoading(false);
-      //  todo: if error or bug is being faced, use navigate from react router dom.
+        },
+      };
+      // humara register page "/" route pe hai
+      const { data } = await axios.post(
+        "/api/user/",
+        { name, email, password, pic },
+        config
+      );
+      toast({
+        title: "Registeration Successful",
+        status: "success",
+        duration: 4500,
+        isClosable: true,
+        position: "top-right",
+      });
+      localStorage.setItem("userInfoMernChat", JSON.stringify(data));
+      setLoading(false);
 
-       history.push('/chats');
-      
-    }
-    catch(err){
+      //  todo: if error or bug is being faced, use navigate from react router dom.
+      navigate("chats");
+    } catch (err) {
       toast({
         title: "ERROR FACED, TRY AGAIN",
         description: err.response.data.message,
@@ -125,9 +98,56 @@ const SignUp = () => {
       });
       setLoading(false);
     }
-  }
+  };
 
+  const postDetails = (pics) => {
+    setLoading(true);
 
+    // todo: check whether the pics is defined or not
+    if (pics === undefined) {
+      toast({
+        title: "Select An Image",
+        status: "warning",
+        duration: 4500,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
+    // todo: check the type of image or whether it is image or not.
+    if (pics.type === "image/jpeg" || pics.type === "image/png") {
+      // adding image to cloudinary
+      const data = new FormData();
+      data.append("file", pics);
+      data.append("upload_preset", "mern-chat-app-main");
+      data.append("cloud_name", "dlz59rwq0");
+      fetch("https://api.cloudinary.com/v1_1/dlz59rwq0/image/upload", {
+        method: "POST",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setPic(data.url.toString());
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    } else {
+      toast({
+        title: "Select An Image",
+        status: "warning",
+        duration: 4500,
+        isClosable: true,
+        position: "top-right",
+      });
+      setLoading(false);
+      return;
+    }
+  };
 
   return (
     <VStack
@@ -202,7 +222,7 @@ const SignUp = () => {
             fontSize="1rem"
             justifyContent="space-between"
           >
-            <FormLabel>Upload Your Picture</FormLabel>
+            <FormLabel>{pic ? "Image Added" : "Add Your Image"}</FormLabel>
             {/* todo: style this component. */}
             {/* <Button >Upload image</Button> */}
             <Input
@@ -220,17 +240,17 @@ const SignUp = () => {
               htmlFor="mainUploadImageInp"
               style={{
                 // position: 'absolute',
-                marginBottom: '10px',
+                marginBottom: "10px",
                 color: "whitesmoke",
                 fontSize: "0.8rem",
                 padding: "12px",
                 backgroundColor: "#7870e6",
                 borderRadius: "8px",
-                cursor: 'pointer'
-              }
-            }
+                cursor: "pointer",
+              }}
+              isLoading={loading}
             >
-              Upload
+              {pic ? <Text color={"black"}>Uploaded</Text> : "Upload"}
             </label>
           </FormControl>
           {/* <button type="submit" onClick={submitHandler}
@@ -245,7 +265,7 @@ const SignUp = () => {
       </FormContainer>
     </VStack>
   );
-}
+};
 const FormContainer = styled.div`
   .title {
     h1 {
