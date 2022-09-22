@@ -55,16 +55,16 @@ const SideDrawer = () => {
   // handling the search
 
   const handleSearch = async () => {
-    if (!search) {
-      toast({
-        title: "Please Enter something in search",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-        position: "top-left",
-      });
-      return;
-    }
+    // if (!search) {
+    //   toast({
+    //     title: "Please Enter something in search",
+    //     status: "warning",
+    //     duration: 5000,
+    //     isClosable: true,
+    //     position: "top-left",
+    //   });
+    //   return;
+    // }
     try {
       setLoading(true);
 
@@ -76,7 +76,7 @@ const SideDrawer = () => {
 
       const { data } = await axios.get(`/api/user?search=${search}`, config);
       // if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
-      console.log(data);
+      // console.log(data);
       setLoading(false);
 
       // setting the search result.
@@ -202,25 +202,27 @@ const SideDrawer = () => {
                 mr={2}
                 value={search}
                 onChange={(e) => {
+                  handleSearch();
                   setSearch(e.target.value);
                 }}
               />
-              <Button onClick={handleSearch}>Search</Button>
+              {/* onClick={handleSearch} */}
+              {/* <Button>Search</Button> */}
             </Box>
-            {loading ? (<ChatLoading users={user}/>): (
-              searchResult ? (
-                searchResult.map((user)=>(
-                  <UserListItem
+            {loading ? (
+              <ChatLoading users={user} />
+            ) : searchResult ? (
+              searchResult.map((user) => (
+                <UserListItem
                   key={user._id}
                   user={user}
-                  handleFunction = {()=>accessChat(user._id)}
-                  />
-                ))
-              ):("")
+                  handleFunction={() => accessChat(user._id)}
+                />
+              ))
+            ) : (
+              ""
             )}
-            {
-              loadingChat &&<Spinner ml={'auto'} display='flex'/>
-            }
+            {loadingChat && <Spinner ml={"auto"} display="flex" />}
           </DrawerBody>
         </DrawerContent>
       </Drawer>

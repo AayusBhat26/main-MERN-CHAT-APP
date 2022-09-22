@@ -1,9 +1,12 @@
-import { useToast } from '@chakra-ui/react';
-import axios from 'axios';
-import React from 'react'
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { ChatState } from '../Context/ChatProvider'
+import { AddIcon } from "@chakra-ui/icons";
+import { Box, Button, Stack, Text, useToast } from "@chakra-ui/react";
+import axios from "axios";
+import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+import { getSender } from "../config/ChatLogics";
+import { ChatState } from "../Context/ChatProvider";
+import ChatLoading from "./ChatLoading";
 
 const MyChats = () => {
   const [loggedUser, setLoggeduser] = useState();
@@ -33,11 +36,134 @@ const MyChats = () => {
     }
   };
 
-  useEffect(()=>{
-    setLoggeduser(JSON.parse(localStorage.getItem('userInfoMernChat')));
+  useEffect(() => {
+    setLoggeduser(JSON.parse(localStorage.getItem("userInfoMernChat")));
+    console.log('hi',selectedChat);
     fetchChats();
-  },[])
-  return <div>mychats</div>;
-}
+  }, []);
+  return (
+    <Box
+      display={{
+        base: selectedChat ? "none" : "flex",
+        md: "flex",
+      }}
+      flexDirection="column"
+      alignItems={"center"}
+      padding={4}
+      width={{
+        base: "100%",
+        md: "35%",
+      }}
+      borderRadius="lg"
+      borderWidth={"0.5px"}
+    >
+      {/* mychats and new group chat icon */}
+      <Box
+        padding="10px"
+        fontSize={{
+          base: "28px",
+          md: "30px",
+        }}
+        display="flex"
+        width="100%"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        Chats
+        <Button
+          backgroundColor={"transparent"}
+          display={"flex"}
+          fontSize={{
+            base: "15px",
+            md: "15px",
+            lg: "20px",
+          }}
+          _hover={{
+            backgroundColor: "ThreeDLightShadow",
+          }}
+          rightIcon={<AddIcon />}
+        >
+          New Group
+        </Button>
+      </Box>
 
-export default MyChats
+      {/* displaying all chats that the logged in user have. */}
+
+      <Box
+        width={"100%"}
+        height={"100%"}
+        display={"flex"}
+        flexDirection="column"
+        padding={3}
+        borderRadius="20px"
+        backgroundColor="whiteAlpha.100"
+      >
+        {console.log(chats)}
+        {/* {chats ? (
+          <Stack>
+            {chats.map((singleChat) => {
+              <Box
+                onClick={() => setSelectedChat(singleChat)}
+                cursor="pointer"
+                backgroundColor={
+                  selectedChat === singleChat
+                    ? "whiteAlpha.300"
+                    : "ThreeDLightShadow"
+                }
+                color={
+                  selectedChat === singleChat
+                    ? "ThreeDLightShadow"
+                    : "whiteAlpha"
+                }
+                key={singleChat._id}
+              >
+                <Text>
+                  {!singleChat.isGroupChat
+                    ? getSender(loggedUser, singleChat.users)
+                    : singleChat.chatName}
+                </Text>
+              </Box>;
+            })}
+          </Stack>
+        ) : (
+          <ChatLoading />
+        )} */}
+        {chats ? (
+          // todo: add scrollable to y axis and apply styles to it.
+          <Stack >
+            {chats.map((chat) => (
+              <Box
+                onClick={() => setSelectedChat(chat)}
+                cursor="pointer"
+                backgroundColor={selectedChat === chat ? "white" : "blackAlpha.500"}
+                color={selectedChat === chat ? "black" : "white"}
+                px={2}
+                py={4}
+                borderRadius="lg"
+                key={chat._id}
+              >
+                <Text>
+                  {!chat.isGroupChat
+                    ? getSender(loggedUser, chat.users)
+                    : chat.chatName}
+                </Text>
+                {chat.latestMessage && (
+                  <Text fontSize="xs">
+                    <b>{chat.latestMessage.sender.name} : </b>
+                    {chat.latestMessage.content.length > 50
+                      ? chat.latestMessage.content.substring(0, 51) + "..."
+                      : chat.latestMessage.content}
+                  </Text>
+                )}
+              </Box>
+            ))}
+          </Stack>
+        ) : (
+          <ChatLoading />
+        )}
+      </Box>
+    </Box>
+  );
+};
+
+export default MyChats;
