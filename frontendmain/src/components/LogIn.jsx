@@ -25,17 +25,21 @@ const LogIn = () => {
 
       // to check whether user is logged in already
 
-      const checkUser = ()=>{
-        if(localStorage.getItem('userInfoMernChat')){
-          navigate('/chats')
-        }
-      }
+      // const checkUser = ()=>{
+      //   if(localStorage.getItem('userInfoMernChat')){
+      //     navigate('/chats')
+      //   }
+      // }
+      // useEffect(()=>{
+      //   checkUser();
+      // },[])
+
       const handleClick = () => {
         setShow(!show);
       };
-      useEffect(()=>{
-        checkUser();
-      },[])
+
+
+      
        const submitHandler = async () => {
          setLoading(true);
 

@@ -11,9 +11,17 @@ import {
 } from "@chakra-ui/react";
 import LogIn from "../components/LogIn";
 import SignUp from "../components/SignUp";
-
+import { useNavigate } from "react-router-dom";
 const Homepage = () => {
-
+  const navigate = useNavigate()
+  const checkUserLoggedIn = ()=>{
+    if(localStorage.getItem('userInfoMernChat')){
+      navigate('/chats')
+    }
+  }
+  useEffect(()=>{
+    checkUserLoggedIn();
+  },[])
   // useEffect(() => {
   //   const userInfo = JSON.parse(localStorage.getItem("userInfoMernChat"));
   //   if (userInfo) {
