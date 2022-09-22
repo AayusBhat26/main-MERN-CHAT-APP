@@ -19,6 +19,7 @@ import {
   DrawerHeader,
   DrawerBody,
   Input,
+  Spinner,
 } from "@chakra-ui/react";
 // icon imports
 
@@ -43,7 +44,7 @@ const SideDrawer = () => {
 
   // chat provider.
 
-  const { user } = ChatState();
+  const { user, setSelectedChat, chats, setChats } = ChatState();
   const logOutHandler = () => {
     localStorage.removeItem("userInfoMernChat");
     navigate("/");
@@ -93,8 +94,32 @@ const SideDrawer = () => {
   };
 
 
-  const accessChat = ()=>{
-
+  const accessChat =async (userId)=>{
+    try {
+    setLoadingChat(true);
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+    };
+    const { data } = await axios.post("/api/chat", { userId }, config);
+    if(!chats.find((c)=>c._id===data._id)){
+      setChats([data,...chats]);
+    }
+    setSelectedChat(data);
+    setLoadingChat(false);
+    onClose();
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-left",
+      });
+    }    
   }
   return (
     <>
@@ -193,6 +218,9 @@ const SideDrawer = () => {
                 ))
               ):("")
             )}
+            {
+              loadingChat &&<Spinner ml={'auto'} display='flex'/>
+            }
           </DrawerBody>
         </DrawerContent>
       </Drawer>
