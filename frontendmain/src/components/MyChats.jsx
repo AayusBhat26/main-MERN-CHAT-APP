@@ -7,6 +7,7 @@ import { useState } from "react";
 import { getSender } from "../config/ChatLogics";
 import { ChatState } from "../Context/ChatProvider";
 import ChatLoading from "./ChatLoading";
+import GroupChatModel from "./GroupChatModel";
 
 const MyChats = () => {
   const [loggedUser, setLoggeduser] = useState();
@@ -38,14 +39,16 @@ const MyChats = () => {
 
   useEffect(() => {
     setLoggeduser(JSON.parse(localStorage.getItem("userInfoMernChat")));
-    console.log('hi',selectedChat);
+    // console.log('hi',selectedChat);
     fetchChats();
   }, []);
   return (
     <Box
+    // overflow={'hidden'}
       display={{
         base: selectedChat ? "none" : "flex",
         md: "flex",
+        // sm:'none'
       }}
       flexDirection="column"
       alignItems={"center"}
@@ -70,35 +73,37 @@ const MyChats = () => {
         alignItems="center"
       >
         Chats
-        <Button
-          backgroundColor={"transparent"}
-          display={"flex"}
-          fontSize={{
-            base: "15px",
-            md: "15px",
-            lg: "20px",
-          }}
-          _hover={{
-            backgroundColor: "ThreeDLightShadow",
-          }}
-          rightIcon={<AddIcon />}
-        >
-          New Group
-        </Button>
+        <GroupChatModel >
+          <Button
+            backgroundColor={"transparent"}
+            display={"flex"}
+            fontSize={{
+              base: "15px",
+              md: "15px",
+              lg: "20px",
+            }}
+            _hover={{
+              backgroundColor: "ThreeDLightShadow",
+            }}
+            rightIcon={<AddIcon />}
+          >
+            New Group
+          </Button>
+        </GroupChatModel>
       </Box>
 
       {/* displaying all chats that the logged in user have. */}
 
       <Box
         width={"100%"}
-        height={"100%"}
+        // height={"%"}
         display={"flex"}
         flexDirection="column"
-        padding={3}
+        padding={1}
         borderRadius="20px"
         backgroundColor="whiteAlpha.100"
       >
-        {console.log(chats)}
+        {/* {console.log(chats)} */}
         {/* {chats ? (
           <Stack>
             {chats.map((singleChat) => {
@@ -130,15 +135,17 @@ const MyChats = () => {
         )} */}
         {chats ? (
           // todo: add scrollable to y axis and apply styles to it.
-          <Stack >
+          <Stack>
             {chats.map((chat) => (
               <Box
                 onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
-                backgroundColor={selectedChat === chat ? "white" : "blackAlpha.500"}
+                backgroundColor={
+                  selectedChat === chat ? "white" : "blackAlpha.500"
+                }
                 color={selectedChat === chat ? "black" : "white"}
-                px={2}
-                py={4}
+                px={1}
+                py={2}
                 borderRadius="lg"
                 key={chat._id}
               >
