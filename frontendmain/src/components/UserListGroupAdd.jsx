@@ -7,11 +7,13 @@ const UserListGroupAdd = ({user, handleFunction}) => {
     <Box
       //     width={'50px'}
       //     height='50px'
+      
       margin={2}
       paddingX={1}
       paddingY={1}
+      
       backgroundColor={"whiteAlpha.900"}
-      color="blackAlpha.600"
+      // color="blackAlpha.600"
       width='100%'
       
       _hover={{
@@ -22,12 +24,14 @@ const UserListGroupAdd = ({user, handleFunction}) => {
       borderRadius="10px"
     >
       <Text display={"flex"}
+      
       padding='2px'
        alignItems="center">
         {user.name}
         <CloseIcon
           fontSize={"10px"}
           marginLeft="10px"
+          
           onClick={handleFunction}
       //     padding="11px"
           // backgroundColor={}

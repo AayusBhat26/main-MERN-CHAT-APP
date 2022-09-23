@@ -9,7 +9,7 @@ import { ChatState } from "../Context/ChatProvider";
 import ChatLoading from "./ChatLoading";
 import GroupChatModel from "./GroupChatModel";
 
-const MyChats = () => {
+const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggeduser] = useState();
   const toast = useToast();
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
@@ -41,10 +41,11 @@ const MyChats = () => {
     setLoggeduser(JSON.parse(localStorage.getItem("userInfoMernChat")));
     // console.log('hi',selectedChat);
     fetchChats();
-  }, []);
+  }, [fetchAgain]);
   return (
     <Box
-    // overflow={'hidden'}
+      // overflowY={'hidden'}
+      scroll
       display={{
         base: selectedChat ? "none" : "flex",
         md: "flex",
@@ -73,7 +74,7 @@ const MyChats = () => {
         alignItems="center"
       >
         Chats
-        <GroupChatModel >
+        <GroupChatModel>
           <Button
             backgroundColor={"transparent"}
             display={"flex"}
@@ -102,6 +103,7 @@ const MyChats = () => {
         padding={1}
         borderRadius="20px"
         backgroundColor="whiteAlpha.100"
+        overflowY={'hidden'}
       >
         {/* {console.log(chats)} */}
         {/* {chats ? (
@@ -135,7 +137,7 @@ const MyChats = () => {
         )} */}
         {chats ? (
           // todo: add scrollable to y axis and apply styles to it.
-          <Stack>
+          <Stack overflowY="scroll">
             {chats.map((chat) => (
               <Box
                 onClick={() => setSelectedChat(chat)}

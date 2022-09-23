@@ -10,6 +10,7 @@ import ChatBox from "../components/ChatBox";
 const ChatPage = () => {
   // const {user} = ChatState();
   const {user} = ChatState();
+  const [fetchAgain, setFetchAgain] = useState(false)
   // const user = localStorage.getItem("userInfoMernChat");
   return (
     <div
@@ -18,9 +19,19 @@ const ChatPage = () => {
       }}
     >
       {user && <SideDrawer />}
-      <Box display={'flex'} justifyContent='space-between' width={'100%'} height='93vh' padding={'12px'}>
-        {user && <MyChats />}
-        {user && <ChatBox />}
+      <Box
+        display={"flex"}
+        justifyContent="space-between"
+        width={"100%"}
+        height="93vh"
+        padding={"12px"}
+      >
+        {user && (
+          <MyChats fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+        )}
+        {user && (
+          <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+        )}
       </Box>
     </div>
   );
