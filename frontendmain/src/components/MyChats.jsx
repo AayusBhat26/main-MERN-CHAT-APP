@@ -25,6 +25,7 @@ const MyChats = ({ fetchAgain }) => {
       };
       const { data } = await axios.get("/api/chat", config);
       setChats(data);
+      console.log(data);
     } catch (err) {
       toast({
         title: "Error Occured!",
@@ -158,10 +159,10 @@ const MyChats = ({ fetchAgain }) => {
                 </Text>
                 {chat.latestMessage && (
                   <Text fontSize="xs">
-                    <b>{chat.latestMessage.sender.name} : </b>
-                    {chat.latestMessage.content.length > 50
+                    {/* <b>{chat.lastestMessage}</b> */}
+                    {/* {chat.latestMessage > 50
                       ? chat.latestMessage.content.substring(0, 51) + "..."
-                      : chat.latestMessage.content}
+                      : chat.latestMessage.content} */}
                   </Text>
                 )}
               </Box>

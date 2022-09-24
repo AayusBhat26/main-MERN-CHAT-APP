@@ -66,15 +66,15 @@ const fetchChats = asyncHandler(async(req,res)=>{
         updatedAt: -1,
       })
       .then(async (results)=>{
-         await User.populate(results, {
-           path: "lastestMessage.sender",
-           select: "name pic email",
-         });
+          results = await User.populate(results, {
+            path: "lastestMessage.sender",
+            select: "name pic email",
+          });
          res.status(200).send(results);
       })
   } catch (error) {
     res.status(400);
-    throw new Error(error.message);
+    throw new Error(`error occured: ${error.message}`);
   }
 });
 

@@ -5,7 +5,8 @@ const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require("./routes/chatRoutes");
 const PORT = process.env.PORT || 5000;
-const {notFound, errorHandler} = require('./middleware/errorMiddleware')
+const {notFound, errorHandler} = require('./middleware/errorMiddleware');
+const messageRoute = require('./routes/messageRoute');
  dotenv.config();
 // database connection
 connectDB();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use('/api/user', userRoutes);
 // chat route
 app.use('/api/chat', chatRoutes);
+app.use('/api/message', messageRoute);
 app.use(notFound);
 app.use(errorHandler);
 
