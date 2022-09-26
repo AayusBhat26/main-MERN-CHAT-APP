@@ -1,20 +1,26 @@
 import { Avatar, border, Box, Text, Tooltip } from '@chakra-ui/react';
 import React from 'react'
-import ScrollBars from 'react-scroll'
+import { useEffect } from 'react';
+// import ScrollBars from 'react-scroll'
+import { useRef } from "react";
+
 import { isLastMessage, isSameSender, messageMargin, sameUser } from '../config/ChatLogics';
 import { ChatState } from '../Context/ChatProvider';
 const ScrollableChat = ({message}) => {
       const {user} = ChatState(); 
+  const messagteEndRef = useRef();
+
+  useEffect(() => {
+    messagteEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [message]);
   return (
     // <ScrollBars>{
     //   // console.log(message)
     // }</ScrollBars>'
 
-    <div
-    style={{
-      // scrollbarWidth:'1px'      
-    }}
-    >
+    <div>
       {message &&
         message.map((singleMessage, index) => (
           <div
@@ -52,13 +58,19 @@ const ScrollableChat = ({message}) => {
                   index,
                   user._id
                 ),
-                marginTop:sameUser(message,singleMessage, index, user._id)? 2: 11
+                marginTop: sameUser(message, singleMessage, index, user._id)
+                  ? 2
+                  : 11,
               }}
             >
               {singleMessage.content}
             </span>
           </div>
         ))}
+
+        <div
+            ref={messagteEndRef}
+        ></div>
     </div>
   );
 }

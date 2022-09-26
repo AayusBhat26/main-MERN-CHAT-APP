@@ -33,6 +33,7 @@ import ProfileModel from "./ProfileModel";
 import { useNavigate } from "react-router-dom";
 import ChatLoading from "./ChatLoading";
 import UserListItem from "./UserListItem";
+import { getSender } from "../config/ChatLogics";
 // import ChatLoading from "../../../../frontend-errors/frontend/src/components/MISC/ChatLoading";
 const SideDrawer = () => {
   const toast = useToast();
@@ -44,7 +45,7 @@ const SideDrawer = () => {
 
   // chat provider.
 
-  const { user, setSelectedChat, chats, setChats } = ChatState();
+  const { user, setSelectedChat, chats, setChats, notification, setNotification } = ChatState();
   const logOutHandler = () => {
     localStorage.removeItem("userInfoMernChat");
     navigate("/");
@@ -156,7 +157,6 @@ const SideDrawer = () => {
         </Tooltip>
         <Text>Chat-App</Text>
         <div>
-          <Menu>{/* <MenuList></MenuList> */}</Menu>
           <Menu>
             <MenuButton
               as={Button}
@@ -179,9 +179,44 @@ const SideDrawer = () => {
                 Logout
               </MenuItem>
             </MenuList>
+          </Menu>
+          <Menu>
             <MenuButton p={1}>
-              <BellIcon fontSize={"25px"}></BellIcon>
+              {/* <Tooltip label="Notification" hasArrow placement="bottom"> */}
+                <Text
+                  color={"white"}
+                  display="inline-block"
+                  fontSize={"10px"}
+                  padding="10px"
+                >
+                  {
+                    notification.length
+                  }
+                </Text>
+                <BellIcon fontSize={"25px"}></BellIcon>
+              {/* </Tooltip> */}
             </MenuButton>
+            <MenuList color={"black"} paddingLeft="2%" fontSize={"18px"}>
+              {!notification.length && "No new messages"}
+              {notification.map((singleNotification) => (
+                <MenuItem
+                  key={singleNotification._id}
+                  onClick={() => {
+                    setSelectedChat(singleNotification.chat);
+                    setNotification(
+                      notification.filter((n) => n !== singleNotification)
+                    );
+                  }}
+                >
+                  {singleNotification.chat.isGroupChat
+                    ? `New Message in ${singleNotification.chat.chatName}`
+                    : `New Message from  ${getSender(
+                        user,
+                        singleNotification.chat.users
+                      )}`}
+                </MenuItem>
+              ))}
+            </MenuList>
           </Menu>
         </div>
       </Box>

@@ -36,7 +36,7 @@ const io = require("socket.io")(server, {
 });
 
 io.on("connection", (socket) => {
-//   console.log(" socket.io connected");
+//   console.log("Connected to socket.io");
   socket.on("setup", (userData) => {
     socket.join(userData._id);
     socket.emit("connected");
@@ -49,6 +49,9 @@ io.on("connection", (socket) => {
 //   socket.on("typing", (room) => socket.in(room).emit("typing"));
 //   socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 
+socket.on('typing', (data)=>{
+      io.to(data.room).emit('')
+})
   socket.on("new message", (newMessageRecieved) => {
     var chat = newMessageRecieved.chat;
 

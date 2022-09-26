@@ -16,6 +16,8 @@ const ChatProvider = ({children}) =>{
             );
             setUser(userInfo);
       },[])
+      // notification array.
+      const [notification, setNotification] = useState([]); 
       // console.log(user);
       
       return (
@@ -27,6 +29,8 @@ const ChatProvider = ({children}) =>{
             setSelectedChat,
             chats,
             setChats,
+            notification,
+            setNotification
           }}
         >
           {children}

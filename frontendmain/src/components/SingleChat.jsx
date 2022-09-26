@@ -1,5 +1,5 @@
 import { ArrowBackIcon, QuestionIcon } from "@chakra-ui/icons";
-import styled from 'styled-components'
+import styled from "styled-components";
 import {
   Avatar,
   Box,
@@ -11,7 +11,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import {
@@ -24,35 +23,37 @@ import ProfileModel from "./ProfileModel";
 import UpdateGroupChatModel from "./UpdateGroupChatModel";
 import ScrollableChat from "./ScrollableChat";
 import io from "socket.io-client";
-
+import Lottie from "lottie-react";
 // socket.io
 const ENDPOINT = "http://localhost:5000";
 var socket, selectedChatCompare;
 
-
-
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const toast = useToast();
   const [message, setMessage] = useState([]); // this will store the messages from the backend.
-  const [loading, setLoading] = useState(false);// loading state
+  const [loading, setLoading] = useState(false); // loading state
   const [newMessage, setNewMessage] = useState(); // new messages state
-  const { user, selectedChat, setSelectedChat } = ChatState(); // context.
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    ChatState(); // context.
 
   const [socketConnection, setSocketConnection] = useState(false);
 
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  // reference for each message
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connected", () => setSocketConnection(true));
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stop typing", () => setIsTyping(false));
+  });
+  // fetching all of the messages
 
-useEffect(() => {
-  socket = io(ENDPOINT);
-  socket.emit("setup", user);
-  socket.on("connected", () => setSocketConnection(true));
-});
-  // fetching all of the messages 
-
-  const fetchMessages = async()=>{
-    if(!selectedChat){
+  const fetchMessages = async () => {
+    if (!selectedChat) {
       return; // since user haven't selected any chat.
-    }
-    else{
+    } else {
       try {
         const config = {
           headers: {
@@ -60,12 +61,14 @@ useEffect(() => {
           },
         };
 
-
         setLoading(true);
 
-        const {data} = await axios.get(`/api/message/${selectedChat._id}`, config)
+        const { data } = await axios.get(
+          `/api/message/${selectedChat._id}`,
+          config
+        );
 
-        console.log(message);
+        // console.log(message);
 
         // setting all of the messages.
 
@@ -73,9 +76,8 @@ useEffect(() => {
 
         setLoading(false);
 
-        // joining the room with selected chat. 
+        // joining the room with selected chat.
         socket.emit("join chat", selectedChat._id);
-
       } catch (error) {
         toast({
           title: "Error Occured!",
@@ -87,33 +89,36 @@ useEffect(() => {
         });
       }
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     // in order to fetch messages depending upon which chat was selected.
     fetchMessages();
 
-    selectedChatCompare =selectedChat; // creating a backkup
-  },[selectedChat]);
-
+    selectedChatCompare = selectedChat; // creating a backkup
+  }, [selectedChat]);
   useEffect(() => {
     socket.on("message recieved", (newMessageRecieved) => {
       if (
-        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        !selectedChatCompare ||
         selectedChatCompare._id !== newMessageRecieved.chat._id
       ) {
-        // if (!notification.includes(newMessageRecieved)) {
-          // setNotification([newMessageRecieved, ...notification]);
-          // setFetchAgain(!fetchAgain);
-        // }
+        // notification
+        if (!notification.includes(newMessageRecieved)) {
+        setNotification([newMessageRecieved, ...notification]);
+        setFetchAgain(!fetchAgain);
+        }
       } else {
         setMessage([...message, newMessageRecieved]);
       }
     });
   });
 
+  // console.log(notification,  )
+
   const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage) {
+      socket.emit("stop typing", selectedChat._id);
       try {
         const config = {
           headers: {
@@ -136,7 +141,7 @@ useEffect(() => {
 
         // sending message from socket.io
         socket.emit("new message", data);
-        // appending new message to existing messages. 
+        // appending new message to existing messages.
         setMessage([...message, data]);
       } catch (error) {
         toast({
@@ -151,13 +156,30 @@ useEffect(() => {
     }
   };
 
-
-  const  typingHandler = (e) => {
+  const typingHandler = (e) => {
     setNewMessage(e.target.value);
     // TYPING ANIMATION
+
+    if (!socketConnection) {
+      return;
+    } else {
+      if (!typing) {
+        setTyping(true);
+        socket.emit("typing", selectedChat._id);
+      }
+      let endTypingTime = new Date().getTime();
+      var stopTime = 3000;
+      setTimeout(() => {
+        var currentTime = new Date().getTime();
+        let timeDiff = currentTime - endTypingTime;
+        if (timeDiff >= stopTime && typing) {
+          socket.emit("stop typing", selectedChat._id);
+          setTyping(false);
+        }
+      }, stopTime);
+    }
   };
 
-  
   return (
     // todo: create the singlechat ui
     <>
@@ -322,5 +344,5 @@ const Container = styled.div`
     flex-direction: column;
     /* overflow-y: scroll; */
   }
-`; 
+`;
 export default SingleChat;
