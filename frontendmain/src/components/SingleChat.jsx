@@ -23,6 +23,13 @@ import { ChatState } from "../Context/ChatProvider";
 import ProfileModel from "./ProfileModel";
 import UpdateGroupChatModel from "./UpdateGroupChatModel";
 import ScrollableChat from "./ScrollableChat";
+import io from "socket.io-client";
+
+// socket.io
+const ENDPOINT = "http://localhost:5000";
+var socket, selectedChatCompare;
+
+
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const toast = useToast();
@@ -31,8 +38,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [newMessage, setNewMessage] = useState(); // new messages state
   const { user, selectedChat, setSelectedChat } = ChatState(); // context.
 
+  const [socketConnection, setSocketConnection] = useState(false);
 
 
+useEffect(() => {
+  socket = io(ENDPOINT);
+  socket.emit("setup", user);
+  socket.on("connected", () => setSocketConnection(true));
+});
   // fetching all of the messages 
 
   const fetchMessages = async()=>{
@@ -60,6 +73,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
         setLoading(false);
 
+        // joining the room with selected chat. 
+        socket.emit("join chat", selectedChat._id);
+
       } catch (error) {
         toast({
           title: "Error Occured!",
@@ -74,10 +90,27 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   }
 
   useEffect(()=>{
-    fetchMessages();
     // in order to fetch messages depending upon which chat was selected.
+    fetchMessages();
+
+    selectedChatCompare =selectedChat; // creating a backkup
   },[selectedChat]);
 
+  useEffect(() => {
+    socket.on("message recieved", (newMessageRecieved) => {
+      if (
+        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        selectedChatCompare._id !== newMessageRecieved.chat._id
+      ) {
+        // if (!notification.includes(newMessageRecieved)) {
+          // setNotification([newMessageRecieved, ...notification]);
+          // setFetchAgain(!fetchAgain);
+        // }
+      } else {
+        setMessage([...message, newMessageRecieved]);
+      }
+    });
+  });
 
   const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage) {
@@ -101,6 +134,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         // console.log(data);
         // setNewMessage("")
 
+        // sending message from socket.io
+        socket.emit("new message", data);
         // appending new message to existing messages. 
         setMessage([...message, data]);
       } catch (error) {
@@ -116,11 +151,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }
   };
 
+
   const  typingHandler = (e) => {
     setNewMessage(e.target.value);
     // TYPING ANIMATION
   };
 
+  
   return (
     // todo: create the singlechat ui
     <>
