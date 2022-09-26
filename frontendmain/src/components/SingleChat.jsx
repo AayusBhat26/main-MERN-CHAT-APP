@@ -1,4 +1,5 @@
 import { ArrowBackIcon, QuestionIcon } from "@chakra-ui/icons";
+import styled from 'styled-components'
 import {
   Avatar,
   Box,
@@ -11,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import {
   getSender,
@@ -20,13 +22,62 @@ import {
 import { ChatState } from "../Context/ChatProvider";
 import ProfileModel from "./ProfileModel";
 import UpdateGroupChatModel from "./UpdateGroupChatModel";
+import ScrollableChat from "./ScrollableChat";
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const toast = useToast();
-  const [message, setMessage] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [newMessage, setNewMessage] = useState();
-  const { user, selectedChat, setSelectedChat } = ChatState();
+  const [message, setMessage] = useState([]); // this will store the messages from the backend.
+  const [loading, setLoading] = useState(false);// loading state
+  const [newMessage, setNewMessage] = useState(); // new messages state
+  const { user, selectedChat, setSelectedChat } = ChatState(); // context.
+
+
+
+  // fetching all of the messages 
+
+  const fetchMessages = async()=>{
+    if(!selectedChat){
+      return; // since user haven't selected any chat.
+    }
+    else{
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        };
+
+
+        setLoading(true);
+
+        const {data} = await axios.get(`/api/message/${selectedChat._id}`, config)
+
+        console.log(message);
+
+        // setting all of the messages.
+
+        setMessage(data);
+
+        setLoading(false);
+
+      } catch (error) {
+        toast({
+          title: "Error Occured!",
+          description: `fetch messages, ${error.message}`,
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
+    }
+  }
+
+  useEffect(()=>{
+    fetchMessages();
+    // in order to fetch messages depending upon which chat was selected.
+  },[selectedChat]);
+
 
   const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage) {
@@ -37,7 +88,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             Authorization: `Bearer ${user.token}`,
           },
         };
-        // setNewMessage("");
+        setNewMessage("");
         const { data } = await axios.post(
           "/api/message",
           {
@@ -47,12 +98,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           config
         );
 
-        console.log(data);
-        setNewMessage("")
+        // console.log(data);
+        // setNewMessage("")
+
+        // appending new message to existing messages. 
         setMessage([...message, data]);
       } catch (error) {
         toast({
-          title: "Error Occured!",
+          title: "Send Message, Error Occured!",
           description: error.message,
           status: "error",
           duration: 4000,
@@ -63,7 +116,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }
   };
 
-  const typingHandler = (e) => {
+  const  typingHandler = (e) => {
     setNewMessage(e.target.value);
     // TYPING ANIMATION
   };
@@ -130,6 +183,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               <UpdateGroupChatModel
                 fetchAgain={fetchAgain}
                 setFetchAgain={setFetchAgain}
+                fetchMessages={fetchMessages}
               />
             </Box>
           )}
@@ -160,8 +214,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         overflowY={"hidden"}
         //   padding='10px'
       >
-        {loading ? <Spinner size={"xl"} /> : <div>{/* MESSAGES */}</div>}
-        <FormControl onKeyDown={sendMessage} isRequired mt={2}>
+        {loading ? (
+          <Spinner size={"xl"} />
+        ) : (
+          <Container>
+            <div className="messages">
+              <ScrollableChat message={message} />
+            </div>
+          </Container>
+        )}
+        {/* <FormControl onKeyDown={sendMessage} isRequired mt={2}>
           <Input
             variant={"outline"}
             background="inherit"
@@ -171,11 +233,57 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             onChange={typingHandler}
             value={newMessage}
           />
-        </FormControl>
+        </FormControl> */}
         {/* chat box */}
+
+        {selectedChat ? (
+          <FormControl onKeyDown={sendMessage} isRequired mt={2}>
+            <Input
+              variant={"outline"}
+              background="inherit"
+              color={"white"}
+              // fontWeight="bold"
+              placeholder="Enter A Message"
+              onChange={typingHandler}
+              value={newMessage}
+            />
+          </FormControl>
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              // alignItems: 'center',
+              marginBottom: "50%",
+              fontSize: "22px",
+              fontWeight: "bold",
+            }}
+          >
+            Hi{" "}
+            <span
+              style={{
+                color: "#AAC4FF",
+                // color:'#F2F2F2',
+                marginLeft: "1%",
+              }}
+            >
+              {user.name}
+            </span>
+            , Select A Chat To Start A Conversation
+          </div>
+        )}
       </Box>
     </>
   );
 };
+const Container = styled.div`
+  overflow: auto;
 
+  .messages {
+    color: whitesmoke;
+    display: flex;
+    flex-direction: column;
+    /* overflow-y: scroll; */
+  }
+`; 
 export default SingleChat;
