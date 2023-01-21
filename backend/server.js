@@ -1,14 +1,14 @@
 const express = require("express");
 const http = require("http");
 const dotenv = require("dotenv");
-const chats = require("./dummydata");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const PORT = process.env.PORT || 5000;
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const messageRoute = require("./routes/messageRoute");
-const { isBooleanObject } = require("util/types");
+const path = require('path')
+// const { isBooleanObject } = require("util/types");
 dotenv.config();
 // database connection
 connectDB();
@@ -22,6 +22,26 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoute);
 app.use(notFound);
 app.use(errorHandler);
+
+
+// deployment code
+const __dirname1 = path.resolve();
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname1, "/frontendmain/build")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(
+      path.resolve(__dirname1, "frontendmain", "build", "index.html")
+    )
+  );
+} else {
+  app.get("/", (req, res) => {
+    res.send("API running..");
+    console.log(
+      'api is running'
+    );
+  });
+}
 
 const server = app.listen(
   PORT,

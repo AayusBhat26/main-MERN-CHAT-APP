@@ -68,6 +68,7 @@ const LogIn = () => {
              { email, password },
              config
            );
+           //  console.log(data);
            toast({
              title: "Login Successful",
              status: "success",
@@ -77,10 +78,11 @@ const LogIn = () => {
            });
            localStorage.setItem("userInfoMernChat", JSON.stringify(data));
            setLoading(false);
-           navigate('/chats')
+             navigate('/chats');
+           //  if(data.email ===localStorage.getItem('userInfoMernChat').email && data.password ===localStorage.getItem('userInfoMernChat').password ){
+           //   navigate('/chats')
+           //  }
            //  todo: if error or bug is being faced, use navigate from react router dom.
-
-           
          } catch (err) {
            toast({
              title: "ERROR FACED, TRY AGAIN",
@@ -94,8 +96,7 @@ const LogIn = () => {
          }
        };
   return (
-
-        <VStack
+    <VStack
       divider={<StackDivider borderColor="gray.200" />}
       spacing={4}
       align="stretch"
@@ -112,7 +113,6 @@ const LogIn = () => {
           </div>
           {/* for email */}
 
-
           <input
             type="email"
             placeholder="Email"
@@ -127,28 +127,26 @@ const LogIn = () => {
           <InputGroup>
             <input
               type={show ? "text" : "password"}
-            // type={'password'}
+              // type={'password'}
               placeholder="Password"
               name="password"
               value={password}
               onChange={(e) => {
-                  // handleChange(e);
+                // handleChange(e);
                 setPassword(e.target.value);
               }}
-
             />
-            <InputRightElement className="showPassword" 
-            onClick={handleClick}
-            >
+            <InputRightElement className="showPassword" onClick={handleClick}>
               {show ? "Hide" : "Show"}
             </InputRightElement>
           </InputGroup>
           <Button
-           isLoading={loading} onClick={submitHandler}
-           >
+            isLoading={loading}
+            onClick={submitHandler}
+          >
             Login
           </Button>
-          <Button
+          {/* <Button
             isLoading={loading}
             onClick={() => {
               setEmail("guestUser@Aayush.com");
@@ -156,7 +154,7 @@ const LogIn = () => {
             }}
           >
             Login As Guest
-          </Button>
+          </Button> */}
         </form>
       </FormContainer>
     </VStack>
@@ -211,7 +209,7 @@ const FormContainer = styled.div`
       transition: 0.42s ease-in-out;
       cursor: pointer;
       border-radius: 0.5rem;
-      background-color: #7870e6;
+      background-color: #006da3;
       text-transform: uppercase;
 
       &:hover {

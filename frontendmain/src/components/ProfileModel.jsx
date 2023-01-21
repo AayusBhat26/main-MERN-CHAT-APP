@@ -22,7 +22,7 @@ const ProfileModel = ({user, children}) => {
           display={"flex"}
           icon={<ViewIcon />}
           onClick={onOpen}
-          color="black"
+          color="white"
         ></IconButton>
       )}
 

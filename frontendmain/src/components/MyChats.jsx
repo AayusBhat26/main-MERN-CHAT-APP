@@ -45,8 +45,6 @@ const MyChats = ({ fetchAgain }) => {
   }, [fetchAgain]);
   return (
     <Box
-      // overflowY={'hidden'}
-      scroll
       display={{
         base: selectedChat ? "none" : "flex",
         md: "flex",
@@ -54,20 +52,19 @@ const MyChats = ({ fetchAgain }) => {
       }}
       flexDirection="column"
       alignItems={"center"}
-      padding={4}
+      padding={1}
       width={{
         base: "100%",
-        md: "35%",
+        md: "25%",
+        // fontsize:'10px'
       }}
-      borderRadius="lg"
-      borderWidth={"0.5px"}
     >
       {/* mychats and new group chat icon */}
       <Box
-        padding="10px"
+        padding="5px"
         fontSize={{
-          base: "28px",
-          md: "30px",
+          base: "22px",
+          md: "20px",
         }}
         display="flex"
         width="100%"
@@ -80,9 +77,9 @@ const MyChats = ({ fetchAgain }) => {
             backgroundColor={"transparent"}
             display={"flex"}
             fontSize={{
-              base: "15px",
-              md: "15px",
-              lg: "20px",
+              base: "10px",
+              md: "10px",
+              lg: "10px",
             }}
             _hover={{
               backgroundColor: "ThreeDLightShadow",
@@ -98,53 +95,42 @@ const MyChats = ({ fetchAgain }) => {
 
       <Box
         width={"100%"}
-        // height={"%"}
         display={"flex"}
         flexDirection="column"
-        padding={1}
-        borderRadius="20px"
+        // padding={1}
+        marginLeft={"-20px"}
+        padding="2px"
+        textAlign={"center"}
+        borderRadius="10px"
         backgroundColor="whiteAlpha.100"
-        overflowY={'hidden'}
       >
-        {/* {console.log(chats)} */}
-        {/* {chats ? (
-          <Stack>
-            {chats.map((singleChat) => {
-              <Box
-                onClick={() => setSelectedChat(singleChat)}
-                cursor="pointer"
-                backgroundColor={
-                  selectedChat === singleChat
-                    ? "whiteAlpha.300"
-                    : "ThreeDLightShadow"
-                }
-                color={
-                  selectedChat === singleChat
-                    ? "ThreeDLightShadow"
-                    : "whiteAlpha"
-                }
-                key={singleChat._id}
-              >
-                <Text>
-                  {!singleChat.isGroupChat
-                    ? getSender(loggedUser, singleChat.users)
-                    : singleChat.chatName}
-                </Text>
-              </Box>;
-            })}
-          </Stack>
-        ) : (
-          <ChatLoading />
-        )} */}
         {chats ? (
           // todo: add scrollable to y axis and apply styles to it.
-          <Stack overflowY="scroll">
+          <Stack
+            // overflowY="scroll"
+            height={"80vh"}
+            scrollBehavior={"smooth"}
+            // overflowY="auto"
+            // scrollBehavior={"smooth"}
+            css={{
+              "&::-webkit-scrollbar": {
+                width: "1px",
+              },
+              "&::-webkit-scrollbar-track": {
+                width: "1px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: "red",
+                borderRadius: "1px",
+              },
+            }}
+          >
             {chats.map((chat) => (
               <Box
                 onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
                 backgroundColor={
-                  selectedChat === chat ? "white" : "blackAlpha.500"
+                  selectedChat === chat ? "white" : "blackAlpha.900"
                 }
                 color={selectedChat === chat ? "black" : "white"}
                 px={1}
@@ -152,10 +138,19 @@ const MyChats = ({ fetchAgain }) => {
                 borderRadius="lg"
                 key={chat._id}
               >
-                <Text>
-                  {!chat.isGroupChat
-                    ? getSender(loggedUser, chat.users)
-                    : chat.chatName}
+                <Text display={'flex'}
+                justifyContent={'center'}
+                alignItems={'center'}
+                gap={'40px'}
+                >
+                  <Box>
+                    {!chat.isGroupChat
+                      ? getSender(loggedUser, chat.users)
+                      : chat.chatName}
+                  </Box>
+                  <Box
+                  fontSize={'10px'}
+                  >{chat.isGroupChat ? "G" : "NG"}</Box>
                 </Text>
                 {chat.latestMessage && (
                   <Text fontSize="xs">
@@ -165,6 +160,13 @@ const MyChats = ({ fetchAgain }) => {
                       : chat.latestMessage.content} */}
                   </Text>
                 )}
+                {/* <Box
+                  display={"flex"}
+                  justifyContent={"normal"}
+                  alignItems={"center"}
+                >
+                  
+                </Box> */}
               </Box>
             ))}
           </Stack>

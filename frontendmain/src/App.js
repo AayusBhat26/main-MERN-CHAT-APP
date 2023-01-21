@@ -7,8 +7,8 @@ function App() {
     <div className="App">
       {/* Homepage => singup or login */}
       <Routes>
-        <Route exact path={"/"} element={<HomePage />} />
-        <Route exact path={"/chats"} element={<ChatPage />} />
+        <Route  path={"/"} element={<HomePage />} />
+        <Route  path={"/chats"} element={<ChatPage />} />
       </Routes>
     </div>
   );

@@ -56,7 +56,7 @@ const GroupChatModel = ({children}) => {
             } catch (error) {
                    toast({
                      title: "Error Occured!",
-                     description: "Failed to Load the chats",
+                     description: "Failed to Load the chats, Refresh!!!",
                      status: "error",
                      duration: 4500,
                      isClosable: true,
@@ -68,7 +68,7 @@ const GroupChatModel = ({children}) => {
       }
 
       const handleSubmit = async()=>{
-        console.log(groupChatName);
+        // console.log(groupChatName);
         if(!groupChatName ){
           toast({
             title: "Provide A Group Name",
@@ -146,22 +146,23 @@ const GroupChatModel = ({children}) => {
 
       }
   return (
-    <Box>
-      {/* <Button onClick={onOpen}>Open Modal</Button> */}
-
+    <Box >
       <span onClick={onOpen}>{children}</span>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal  
+      isOpen={isOpen} onClose={onClose} >
         <ModalOverlay />
         <ModalContent
-          width={"100%"}
-          // height="40%"
+          // width={"100%"}
+          // height="50%"
           border={"1px solid white"}
           color="whiteAlpha.900"
-          backgroundColor={"inherit"}
+          backgroundColor={"black"}
           display="flex"
           justifyContent={"center"}
           alignItems="center"
+          height={'70vh'}
+          // width={''}
         >
           <ModalHeader textAlign={"center"}>New Group </ModalHeader>
           <Divider></Divider>
@@ -206,7 +207,7 @@ const GroupChatModel = ({children}) => {
                   ""
                 )}
               </Box>
-              <Text textAlign={'center'}> Selected Users</Text>
+              <Text textAlign={'center'} fontSize='2xl' fontWeight={'1000'}> Selected Users</Text>
               {
                 //  selectedUsers ? (
                 //   selectedUsers.map((u)=>(

@@ -244,7 +244,7 @@ const SignUp = () => {
                 color: "whitesmoke",
                 fontSize: "0.8rem",
                 padding: "12px",
-                backgroundColor: "#7870e6",
+                backgroundColor: "#006da3",
                 borderRadius: "8px",
                 cursor: "pointer",
               }}
@@ -317,7 +317,7 @@ const FormContainer = styled.div`
       transition: 0.42s ease-in-out;
       cursor: pointer;
       border-radius: 0.5rem;
-      background-color: #7870e6;
+      background-color: #006da3;
       text-transform: uppercase;
 
       &:hover {

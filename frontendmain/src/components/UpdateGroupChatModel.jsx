@@ -232,14 +232,13 @@ const UpdateGroupChatModel = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
               Group Settings
             </ModalHeader>
             <ModalCloseButton />
-            <ModalBody>
+            <ModalBody bgColor={"blackAlpha.900"}>
               <Tooltip label="Current Group Name" placement="bottom">
                 <Text
                   display={"flex"}
                   justifyContent="center"
                   fontWeight={"800"}
                 >
-                  {" "}
                   {selectedChat.chatName}
                 </Text>
               </Tooltip>
@@ -330,7 +329,11 @@ const UpdateGroupChatModel = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
               )}
             </ModalBody>
 
-            <ModalFooter>
+            <ModalFooter
+              display={"flex"}
+              justifyContent="center"
+              alignContent={"center"}
+            >
               <Button
                 fontSize={"10px"}
                 colorScheme="red"
@@ -341,8 +344,9 @@ const UpdateGroupChatModel = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
             </ModalFooter>
           </ModalContent>
         </Modal>
-      </Box>
+      </Box>  
     </>
+    
   );
 };
   

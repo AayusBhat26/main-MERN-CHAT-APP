@@ -7,7 +7,8 @@ const ChatBox = ({fetchAgain, setFetchAgain}) => {
   const {selectedChat} = ChatState();
   return (
     <Box
-    
+    padding={'1'}
+    border={'none'}
     display={{
       base: selectedChat ? 'flex': "none", md:'flex'
     }}
@@ -16,7 +17,7 @@ const ChatBox = ({fetchAgain, setFetchAgain}) => {
     color='white'
     width={
       {
-        base: '100%', md:'62%'
+        base: '100%', md:'75%'
       }
     }
     borderRadius='lg'
